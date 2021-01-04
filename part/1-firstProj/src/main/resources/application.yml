@@ -1,0 +1,8 @@
+
+server:
+  #应用启动端口
+  port: 8081
+  #spring Boot上下文
+  servlet:
+    context-path: /sptest
+
