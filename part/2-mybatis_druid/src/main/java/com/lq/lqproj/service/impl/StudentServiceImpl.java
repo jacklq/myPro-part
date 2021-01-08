@@ -2,7 +2,7 @@ package com.lq.lqproj.service.impl;
 
 import com.lq.lqproj.dao.StudentDao;
 import com.lq.lqproj.entity.Student;
-import com.lq.lqproj.service.StudentService;
+import com.lq.lqproj.service.IStudentService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -12,12 +12,48 @@ import java.util.List;
  * (Student)表服务实现类
  *
  * @author jack
- * @since 2021-01-06 22:34:57
+ * @since 2021-01-08 23:03:28
  */
 @Service("studentService")
-public class StudentServiceImpl implements StudentService {
+public class StudentServiceImpl implements IStudentService {
     @Resource
     private StudentDao studentDao;
+
+
+/** ******增删改查**************************/
+
+    /**
+     * 新增数据
+     *
+     * @param student 实例对象
+     * @return 影响行数
+     */
+    @Override
+    public Integer insert(Student student) {
+        return this.studentDao.insert(student);
+    }
+
+    /**
+     * 通过主键删除数据
+     *
+     * @param id 主键
+     * @return 影响行数
+     */
+    @Override
+    public Integer deleteById(Long id) {
+        return this.studentDao.deleteById(id);
+    }
+
+    /**
+     * 修改数据
+     *
+     * @param student 实例对象
+     * @return 影响行数
+     */
+    @Override
+    public Integer update(Student student) {
+        return this.studentDao.update(student);
+    }
 
     /**
      * 通过ID查询单条数据
@@ -29,6 +65,8 @@ public class StudentServiceImpl implements StudentService {
     public Student queryById(Long id) {
         return this.studentDao.queryById(id);
     }
+
+/** ******批量操作**************************/
 
     /**
      * 查询多条数据
@@ -42,38 +80,5 @@ public class StudentServiceImpl implements StudentService {
         return this.studentDao.queryAllByLimit(offset, limit);
     }
 
-    /**
-     * 新增数据
-     *
-     * @param student 实例对象
-     * @return 实例对象
-     */
-    @Override
-    public Student insert(Student student) {
-        this.studentDao.insert(student);
-        return student;
-    }
 
-    /**
-     * 修改数据
-     *
-     * @param student 实例对象
-     * @return 实例对象
-     */
-    @Override
-    public Student update(Student student) {
-        this.studentDao.update(student);
-        return this.queryById(student.getId());
-    }
-
-    /**
-     * 通过主键删除数据
-     *
-     * @param id 主键
-     * @return 是否成功
-     */
-    @Override
-    public boolean deleteById(Long id) {
-        return this.studentDao.deleteById(id) > 0;
-    }
 }

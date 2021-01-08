@@ -6,11 +6,11 @@ import java.util.Date;
 /**
  * (Student)实体类
  *
- * @author jack
- * @since 2021-01-06 22:34:57
+ * @author makejava
+ * @since 2021-01-08 23:03:26
  */
 public class Student implements Serializable {
-    private static final long serialVersionUID = -80882326410702880L;
+    private static final long serialVersionUID = 333313332246514261L;
     /**
      * ID
      */
