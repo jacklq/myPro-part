@@ -13,6 +13,7 @@ $!callback.setSavePath($tool.append($tableInfo.savePath, "/dao"))
 
 import $!{tableInfo.savePackageName}.entity.$!{tableInfo.name};
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 /**
@@ -21,6 +22,7 @@ import java.util.List;
  * @author jack
  * @since $!time.currTime()
  */
+ @Mapper
 public interface $!{tableName} {
 /**  *********增删改查 *******************************/
 	/**  1

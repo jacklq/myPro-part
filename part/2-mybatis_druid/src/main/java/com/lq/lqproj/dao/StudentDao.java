@@ -1,6 +1,7 @@
 package com.lq.lqproj.dao;
 
 import com.lq.lqproj.entity.Student;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
  * @author jack
  * @since 2021-01-09 11:36:01
  */
+@Mapper
 public interface StudentDao {
 /**  *********增删改查 *******************************/
     /**

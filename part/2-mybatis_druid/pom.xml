@@ -44,12 +44,7 @@
                 <artifactId>lombok</artifactId>
                 <optional>true</optional>
             </dependency>
-            <!--引入@param注解-->
-            <dependency>
-                <groupId>org.apache.ibatis</groupId>
-                <artifactId>ibatis-core</artifactId>
-                <version>3.0</version>
-            </dependency>
+
         <!--工具组件e-->
         <!--数据库-->
         <dependency>
