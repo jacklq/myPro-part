@@ -1,0 +1,105 @@
+##定义初始变量
+#set($tableName = $tool.append($tableInfo.name, "Dao"))
+##设置回调
+$!callback.setFileName($tool.append($tableName, ".java"))
+$!callback.setSavePath($tool.append($tableInfo.savePath, "/dao"))
+
+##拿到主键
+#if(!$tableInfo.pkColumn.isEmpty())
+    #set($pk = $tableInfo.pkColumn.get(0))
+#end
+
+#if($tableInfo.savePackageName)package $!{tableInfo.savePackageName}.#{end}dao;
+
+import $!{tableInfo.savePackageName}.entity.$!{tableInfo.name};
+import org.apache.ibatis.annotations.Param;
+import java.util.List;
+
+/**
+ * $!{tableInfo.comment}($!{tableInfo.name})表数据库访问层
+ *
+ * @author jack
+ * @since $!time.currTime()
+ */
+public interface $!{tableName} {
+/**  *********增删改查 *******************************/
+	/**  1
+     * 新增数据
+     * @param $!tool.firstLowerCase($!{tableInfo.name}) 实例对象
+     * @return 影响行数
+     */
+    public Integer insert($!{tableInfo.name} $!tool.firstLowerCase($!{tableInfo.name}));
+
+	/**  2
+     * 通过主键删除数据
+     * @param $!pk.name 主键
+     * @return 影响行数
+     */
+    public Integer deleteById($!pk.shortType $!pk.name);
+	
+	 /** 3
+     * 修改数据
+     * @param $!tool.firstLowerCase($!{tableInfo.name}) 实例对象
+     * @return 影响行数
+     */
+    public Integer update($!{tableInfo.name} $!tool.firstLowerCase($!{tableInfo.name}));
+ 
+    /**  4
+     * 通过ID查询单条数据
+     * @param $!pk.name 主键
+     * @return 实例对象
+     */
+    public $!{tableInfo.name} queryById($!pk.shortType $!pk.name);
+
+
+/** ************* 批量操作 **************************/
+
+    /**  *****1*********
+     * 批量新增数据（MyBatis原生foreach方法）
+     * @param entities List<$!{tableInfo.name}> 实例对象列表
+     * @return 影响行数
+     */
+    public Integer insertBatch(@Param("entities") List<$!{tableInfo.name}> entities);
+
+	/** *****2*********
+     * 批量删除数据
+     * @param idList id列表
+     * @return 影响行数
+     */
+	public Integer deleteBatchByIds(@Param("idList") List idList);
+	 
+	/** *****3*********
+     * 批量更新数据（Foreach方式）
+     * @param entities List<$!{tableInfo.name}> 实例对象列表
+     * @return 影响行数
+     */
+	public  Integer updateBatchForeach(@Param("entities") List<$!{tableInfo.name}> entities);
+	
+	/**
+     * 批量更新数据（CaseWhen方式）
+     * @param entities List<$!{tableInfo.name}> 实例对象列表
+     * @return 影响行数
+     */
+	public  Integer updateBatchCaseWhen(@Param("entities") List<$!{tableInfo.name}> entities);
+	
+	/** *****4*********
+     * 批量查询数据
+     * @param idList id列表
+     * @return 影响行数
+     */
+	public List<$!{tableInfo.name}> queryBatchByIds(@Param("idList") List idList)
+	
+	
+/** ************* 其他操作 **************************/
+    /**
+     * 查询指定行数据
+     *
+     * @param offset 查询起始位置
+     * @param limit 查询条数
+     * @return 对象列表
+     */
+    public List<$!{tableInfo.name}> queryAllByLimit(@Param("offset") int offset, @Param("limit") int limit);
+
+    
+
+}

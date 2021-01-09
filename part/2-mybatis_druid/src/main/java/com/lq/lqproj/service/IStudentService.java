@@ -8,7 +8,7 @@ import java.util.List;
  * (Student)表服务接口
  *
  * @author jack
- * @since 2021-01-08 23:03:27
+ * @since 2021-01-09 11:36:03
  */
 public interface IStudentService {
 /** ******增删改查**************************/
@@ -45,7 +45,52 @@ public interface IStudentService {
     Student queryById(Long id);
 
 
-/** ******批量操作**************************/
+/** ******批量操作-增删改查**************************/
+    /**
+     * 插入多条数据
+     *
+     * @param idList id列表
+     * @return 影响行数
+     */
+    Integer insertBatch(List<Student> studentList);
+
+    /**
+     * 删除多条数据
+     *
+     * @param idList id列表
+     * @return 影响行数
+     */
+    Integer deleteBatchByIds(List idList);
+
+    /**
+     * 更新多条数据（Foreach方式）
+     *
+     * @param studentList student列表
+     * @return 影响行数
+     */
+    Integer updateBatchForeach(List<Student> studentList);
+
+
+    /**
+     * 更新多条数据（CaseWhen方式）
+     *
+     * @param studentList student列表
+     * @return 影响行数
+     */
+    Integer updateBatchCaseWhen(List<Student> studentList);
+
+
+    /**
+     * 查询多条数据
+     *
+     * @param idList id列表
+     * @return 对象列表
+     */
+    List<Student> queryBatchByIds(List idList);
+
+
+/** ******其他操作**************************/
+
     /**
      * 查询多条数据
      *

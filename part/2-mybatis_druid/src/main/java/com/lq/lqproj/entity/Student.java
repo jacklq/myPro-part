@@ -1,5 +1,7 @@
 package com.lq.lqproj.entity;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -7,10 +9,12 @@ import java.util.Date;
  * (Student)实体类
  *
  * @author makejava
- * @since 2021-01-08 23:03:26
+ * @since 2021-01-09 11:36:00
  */
+
+@Data
 public class Student implements Serializable {
-    private static final long serialVersionUID = 333313332246514261L;
+    private static final long serialVersionUID = -89315412588872081L;
     /**
      * ID
      */
@@ -36,53 +40,5 @@ public class Student implements Serializable {
      */
     private Date cretim;
 
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNum() {
-        return num;
-    }
-
-    public void setNum(String num) {
-        this.num = num;
-    }
-
-    public String getSname() {
-        return sname;
-    }
-
-    public void setSname(String sname) {
-        this.sname = sname;
-    }
-
-    public String getSex() {
-        return sex;
-    }
-
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
-
-    public String getAge() {
-        return age;
-    }
-
-    public void setAge(String age) {
-        this.age = age;
-    }
-
-    public Date getCretim() {
-        return cretim;
-    }
-
-    public void setCretim(Date cretim) {
-        this.cretim = cretim;
-    }
 
 }

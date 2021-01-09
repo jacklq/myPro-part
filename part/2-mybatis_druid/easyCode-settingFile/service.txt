@@ -1,0 +1,106 @@
+##定义初始变量
+#set($tableName = $tool.append($tableInfo.name, "Service"))
+##设置回调
+$!callback.setFileName($tool.append("I", $tool.append($tableName, ".java")))
+$!callback.setSavePath($tool.append($tableInfo.savePath, "/service"))
+
+##拿到主键
+#if(!$tableInfo.pkColumn.isEmpty())
+    #set($pk = $tableInfo.pkColumn.get(0))
+#end
+
+#if($tableInfo.savePackageName)package $!{tableInfo.savePackageName}.#{end}service;
+
+import $!{tableInfo.savePackageName}.entity.$!{tableInfo.name};
+import java.util.List;
+
+/**
+ * $!{tableInfo.comment}($!{tableInfo.name})表服务接口
+ *
+ * @author jack
+ * @since $!time.currTime()
+ */
+public interface I$!{tableInfo.name}Service {
+/** ******增删改查**************************/
+     /**
+     * 新增数据
+     * @param $!tool.firstLowerCase($!{tableInfo.name}) 实例对象
+     * @return 影响行数
+     */
+    public Integer insert($!{tableInfo.name} $!tool.firstLowerCase($!{tableInfo.name}));
+    
+    /**
+     * 通过主键删除数据
+     * @param $!pk.name 主键
+     * @return 影响行数
+     */
+    public Integer deleteById($!pk.shortType $!pk.name);
+    
+     /**
+     * 修改数据
+     * @param $!tool.firstLowerCase($!{tableInfo.name}) 实例对象
+     * @return 影响行数
+     */
+    public Integer update($!{tableInfo.name} $!tool.firstLowerCase($!{tableInfo.name}));
+ 
+     /**
+     * 通过ID查询单条数据
+     * @param $!pk.name 主键
+     * @return 实例对象
+     */
+    public $!{tableInfo.name} queryById($!pk.shortType $!pk.name);
+
+
+/** ******批量操作-增删改查**************************/
+	/**
+     * 插入多条数据
+     * @param idList id列表
+     * @return 影响行数
+     */
+	public Integer insertBatch(List<$!{tableInfo.name}> $!tool.firstLowerCase($!{tableInfo.name})List);
+	
+	/**
+     * 删除多条数据
+     * @param idList id列表
+     * @return 影响行数
+     */
+	public Integer deleteBatchByIds(List idList);
+	
+	/**
+     * 更新多条数据（Foreach方式）
+     * @param studentList student列表
+     * @return 影响行数
+     */
+	public  Integer updateBatchForeach(List<$!{tableInfo.name}>  $!tool.firstLowerCase($!{tableInfo.name})List);
+ 
+ 
+	/**
+     * 更新多条数据（CaseWhen方式）
+     * @param studentList student列表
+     * @return 影响行数
+     */
+    public  Integer updateBatchCaseWhen(List<$!{tableInfo.name}>  $!tool.firstLowerCase($!{tableInfo.name})List);
+	
+	
+	/**
+     * 查询多条数据
+     * @param idList id列表
+     * @return 对象列表
+     */
+    public List<$!{tableInfo.name}> queryBatchByIds(List idList);
+
+
+/** ******其他操作**************************/
+
+    /**
+     * 查询多条数据
+     * @param offset 查询起始位置
+     * @param limit 查询条数
+     * @return 对象列表
+     */
+    public List<$!{tableInfo.name}> queryAllByLimit(int offset, int limit);
+
+ 
+   
+
+}
