@@ -79,7 +79,7 @@ public interface StudentDao {
      * @param entities List<Student> 实例对象列表
      * @return 影响行数
      */
-    Integer updateBatchForeach(@Param("entities") List<Student> entities);
+    Integer updateBatchForeach( List<Student> entities);
 
     /**
      * 批量更新数据（CaseWhen方式）
@@ -87,7 +87,7 @@ public interface StudentDao {
      * @param entities List<Student> 实例对象列表
      * @return 影响行数
      */
-    Integer updateBatchCaseWhen(@Param("entities") List<Student> entities);
+    Integer updateBatchCaseWhen( List<Student> entities);
 
     /**
      * ****4*********
