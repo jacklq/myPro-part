@@ -83,7 +83,7 @@ public class $!{tableName} {
  /** ************************ 批量操作*******************/
     /**
      * 插入多条数据
-     * @param idList id列表
+     * @param studentList student列表
      * @return 影响行数
      */
     @RequestMapping(value = "/insertBatch", method = RequestMethod.POST)
@@ -93,12 +93,15 @@ public class $!{tableName} {
     }
     /**
      * 删除多条数据
-     * @param idList id列表
+     * @param studentList student列表
      * @return 影响行数
      */
     @RequestMapping(value = "/deleteBatchByIds", method = RequestMethod.POST)
-    public Integer deleteBatchByIds(@RequestBody  List idList ){
+    public Integer deleteBatchByIds(@RequestBody List<$!{tableInfo.name}> $!tool.firstLowerCase($!{tableInfo.name})List){
         logger.info("删除多条数据");
+         List<Long> idList = $!tool.firstLowerCase($!{tableInfo.name})List
+         .stream().map(x -> x.getId()).collect(Collectors.toList());
+
         return this.$!{tool.firstLowerCase($tableInfo.name)}Service.deleteBatchByIds(idList);
     }
     /**
@@ -130,7 +133,8 @@ public class $!{tableName} {
     @RequestMapping(value = "/queryBatchByIds", method = RequestMethod.POST)
     public List<$!{tableInfo.name}>  queryBatchByIds(@RequestBody List<$!{tableInfo.name}>  $!tool.firstLowerCase($!{tableInfo.name})List){
         logger.info("查询多条数据");
-         List<Long> idList = $!tool.firstLowerCase($!{tableInfo.name})List.stream().map(x -> x.getId()).collect(Collectors.toList());
+         List<Long> idList = $!tool.firstLowerCase($!{tableInfo.name})List
+         .stream().map(x -> x.getId()).collect(Collectors.toList());//此处在生成时报路径错误，生成后删除多余行
         return this.$!{tool.firstLowerCase($tableInfo.name)}Service.queryBatchByIds(idList);
     }
 

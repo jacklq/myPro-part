@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * (Student)表控制层
  *
  * @author jack
- * @since 2021-01-10 23:42:24
+ * @since 2021-01-11 14:46:21
  */
 @RestController
 
@@ -82,7 +82,7 @@ public class StudentController {
     /**
      * 插入多条数据
      *
-     * @param idList id列表
+     * @param studentList student列表
      * @return 影响行数
      */
     @RequestMapping(value = "/insertBatch", method = RequestMethod.POST)
@@ -100,7 +100,9 @@ public class StudentController {
     @RequestMapping(value = "/deleteBatchByIds", method = RequestMethod.POST)
     public Integer deleteBatchByIds(@RequestBody List<Student> studentList) {
         logger.info("删除多条数据");
-        List<Long> idList = studentList.stream().map(x -> x.getId()).collect(Collectors.toList());
+        List<Long> idList = studentList
+                .stream().map(x -> x.getId()).collect(Collectors.toList());
+
         return this.studentService.deleteBatchByIds(idList);
     }
 
@@ -138,7 +140,7 @@ public class StudentController {
     @RequestMapping(value = "/queryBatchByIds", method = RequestMethod.POST)
     public List<Student> queryBatchByIds(@RequestBody List<Student> studentList) {
         logger.info("查询多条数据");
-        List<Long> idList = studentList.stream().map(x -> x.getId()).collect(Collectors.toList());
+        List<Long> idList = studentList.stream().map(x -> x.getId()).collect(Collectors.toList());//此处在生成时报路径错误，生成后删除多余行
         return this.studentService.queryBatchByIds(idList);
     }
 
