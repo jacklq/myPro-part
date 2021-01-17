@@ -17,8 +17,20 @@ import java.util.List;
 @Service("studentService")
 @Transactional(rollbackFor = Exception.class)/*发生异常则回滚*/
 public class StudentServiceImpl implements IStudentService {
+
+
+
     @Autowired
     private StudentDao studentDao;
+
+    /** * ********单元测试用****************/
+    public StudentDao getStudentDao() {
+        return studentDao;
+    }
+    public void setStudentDao(StudentDao studentDao) {
+        this.studentDao = studentDao;
+    }
+    /*************************************/
 
 
 /** ******增删改查**************************/
