@@ -5,7 +5,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.lq.lqproj.entity.Student;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 
 /*浏览器输入：http://localhost:8081/sptest/hello
@@ -45,6 +48,20 @@ public class HelloController {
         student.setAge(age);
         student.setSname(name);
         return  student;
+    }
+
+    @RequestMapping(value = "/hello", method = RequestMethod.POST)
+    public JSONObject sayHello(@RequestBody @Valid Student studentIn, BindingResult bindingResult) {
+        logger.info("第一次交互");
+        JSONObject jsonObject=new JSONObject();
+        String message="success";
+
+        if(bindingResult.hasErrors()){
+            message=bindingResult.getAllErrors().get(0).getDefaultMessage();
+        }
+        jsonObject.put("data",studentIn);
+        jsonObject.put("message",message);
+        return jsonObject;
     }
 
 }
