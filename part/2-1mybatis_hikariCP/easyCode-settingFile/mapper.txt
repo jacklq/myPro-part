@@ -1,0 +1,163 @@
+##引入mybatis支持
+$!mybatisSupport
+
+##设置保存名称与保存位置
+$!callback.setFileName($tool.append($!{tableInfo.name}, "Dao.xml"))
+$!callback.setSavePath($tool.append($modulePath, "/src/main/resources/mapper"))
+
+##拿到主键
+#if(!$tableInfo.pkColumn.isEmpty())
+    #set($pk = $tableInfo.pkColumn.get(0))
+#end
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="$!{tableInfo.savePackageName}.dao.$!{tableInfo.name}Dao">
+
+    <resultMap type="$!{tableInfo.savePackageName}.entity.$!{tableInfo.name}" id="$!{tableInfo.name}Map">
+		#foreach($column in $tableInfo.fullColumn)
+			<result property="$!column.name" column="$!column.obj.name" jdbcType="$!column.ext.jdbcType"/>
+		#end
+    </resultMap>
+	
+<!--增删改查-->
+	<!--1-新增所有列-->
+    <insert id="insert" keyProperty="$!pk.name" useGeneratedKeys="true">
+        insert into $!{tableInfo.obj.parent.name}.$!{tableInfo.obj.name}(#foreach($column in $tableInfo.otherColumn)$!column.obj.name#if($velocityHasNext), #end#end)
+        values (#foreach($column in $tableInfo.otherColumn)#{$!{column.name}}#if($velocityHasNext), #end#end)
+    </insert>
+
+	<!--2-通过主键删除-->
+    <delete id="deleteById">
+        delete from $!{tableInfo.obj.parent.name}.$!{tableInfo.obj.name} where $!pk.obj.name = #{$!pk.name}
+    </delete>
+
+	<!--3-通过主键修改数据-->
+    <update id="update">
+        update $!{tableInfo.obj.parent.name}.$!{tableInfo.obj.name}
+        <set>
+			#foreach($column in $tableInfo.otherColumn)
+				<if test="$!column.name != null#if($column.type.equals("java.lang.String")) and $!column.name != ''#end">
+					$!column.obj.name = #{$!column.name},
+				</if>
+			#end
+        </set>
+        where $!pk.obj.name = #{$!pk.name}
+    </update>
+
+	<!--4-查询单个-->
+    <select id="queryById" resultMap="$!{tableInfo.name}Map">
+        select
+          #allSqlColumn()
+
+        from $!{tableInfo.obj.parent.name}.$!tableInfo.obj.name
+        where $!pk.obj.name = #{$!pk.name}
+    </select>
+<!--批量操作-->
+	<!--1-批量新增-->
+	<insert id="insertBatch" keyProperty="$!pk.name" useGeneratedKeys="true">
+        insert into $!{tableInfo.obj.parent.name}.$!{tableInfo.obj.name}(#foreach($column in $tableInfo.otherColumn)$!column.obj.name#if($velocityHasNext), #end#end)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#foreach($column in $tableInfo.otherColumn)#{entity.$!{column.name}}#if($velocityHasNext), #end#end)
+        </foreach>
+    </insert>
+
+    <!--2-批量删除-->
+	<delete id="deleteBatchByIds"    parameterType="java.lang.Long" >
+		delete  from $!{tableInfo.obj.parent.name}.$!{tableInfo.obj.name}   WHERE  id in
+			<foreach collection="idList" item="id" open="(" close=")"  separator=",">
+			  #{id}
+			</foreach>
+	</delete>
+
+
+	<!--3-批量修改-->
+	<!-- 批量更新第一种方法，通过接收传进来的参数list进行循环着组装sql -->
+		  <update id="updateBatchForeach" parameterType="java.util.List" >
+			<foreach collection="list" item="$!{tableInfo.obj.name}" index="index" open="" close="" separator=";">
+			  update $!{tableInfo.obj.parent.name}.$!{tableInfo.obj.name}
+			  <set >
+					#foreach($column in $tableInfo.otherColumn)
+						<if test="$!{tableInfo.obj.name}.$!column.name != null">
+							$!column.obj.name = #{$!{tableInfo.obj.name}.$!column.name},
+						</if>
+					#end
+			  </set>
+			  where id = #{$!{tableInfo.obj.name}.id,jdbcType=BIGINT}
+			</foreach>
+		  </update>
+
+	<!-- 批量更新第二种方法，通过 case when语句变相的进行批量更新 -->
+  <update id="updateBatchCaseWhen" parameterType="java.util.List" >
+    update $!{tableInfo.obj.parent.name}.$!{tableInfo.obj.name}
+    <trim prefix="set" suffixOverrides=",">
+		#foreach($column in $tableInfo.otherColumn)
+		 <trim prefix="$!column.name =case" suffix="end,">
+			  <foreach collection="list" item="$!{tableInfo.obj.name}" index="index">
+				  <if test="$!{tableInfo.obj.name}.$!column.name !=null">
+					when id=#{$!{tableInfo.obj.name}.id} then #{$!{tableInfo.obj.name}.$!column.name}
+				  </if>
+			  </foreach>
+		  </trim>
+
+		#end
+
+    </trim>
+    where
+    <foreach collection="list" separator="or" item="$!{tableInfo.obj.name}" index="index" >
+      id=#{$!{tableInfo.obj.name}.id}
+    </foreach>
+  </update>
+
+	<!--4-批量查询-->
+
+    <!--查询指定行数据-->
+    <select id="queryBatchByIds" resultMap="$!{tableInfo.name}Map">
+        select  *
+        from $!{tableInfo.obj.parent.name}.$!tableInfo.obj.name
+        where id in 
+		<foreach collection="idList" item="id" open="(" close=")"  separator=",">
+			#{id}
+		</foreach>
+    </select>
+
+
+
+
+
+
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="$!{tableInfo.name}Map">
+        select
+          #allSqlColumn()
+
+        from $!{tableInfo.obj.parent.name}.$!tableInfo.obj.name
+        <where>
+		#foreach($column in $tableInfo.fullColumn)
+            <if test="$!column.name != null#if($column.type.equals("java.lang.String")) and $!column.name != ''#end">
+                and $!column.obj.name = #{$!column.name}
+            </if>
+		#end
+        </where>
+    </select>
+
+    
+
+    
+
+    <insert id="insertOrUpdateBatch" keyProperty="$!pk.name" useGeneratedKeys="true">
+        insert into $!{tableInfo.obj.parent.name}.$!{tableInfo.obj.name}(#foreach($column in $tableInfo.otherColumn)$!column.obj.name#if($velocityHasNext), #end#end)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#foreach($column in $tableInfo.otherColumn)#{entity.$!{column.name}}#if($velocityHasNext), #end#end)
+        </foreach>
+        on duplicate key update
+         #foreach($column in $tableInfo.otherColumn)$!column.obj.name = values($!column.obj.name) #if($velocityHasNext), #end#end
+    </insert>
+
+    
+
+    
+</mapper>

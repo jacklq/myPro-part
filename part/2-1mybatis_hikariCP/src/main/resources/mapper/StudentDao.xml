@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lq.lqproj.dao.StudentDao">
+
+    <resultMap type="com.lq.lqproj.entity.Student" id="StudentMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="num" column="num" jdbcType="VARCHAR"/>
+        <result property="sname" column="sname" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="VARCHAR"/>
+        <result property="age" column="age" jdbcType="VARCHAR"/>
+        <result property="cretim" column="creTim" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--增删改查-->
+    <!--1-新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into lq.student(num, sname, sex, age, creTim)
+        values (#{num}, #{sname}, #{sex}, #{age}, #{cretim})
+    </insert>
+
+    <!--2-通过主键删除-->
+    <delete id="deleteById">
+        delete from lq.student where id = #{id}
+    </delete>
+
+    <!--3-通过主键修改数据-->
+    <update id="update">
+        update lq.student
+        <set>
+            <if test="num != null and num != ''">
+                num = #{num},
+            </if>
+            <if test="sname != null and sname != ''">
+                sname = #{sname},
+            </if>
+            <if test="sex != null and sex != ''">
+                sex = #{sex},
+            </if>
+            <if test="age != null and age != ''">
+                age = #{age},
+            </if>
+            <if test="cretim != null">
+                creTim = #{cretim},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--4-查询单个-->
+    <select id="queryById" resultMap="StudentMap">
+        select
+          id, num, sname, sex, age, creTim
+        from lq.student
+        where id = #{id}
+    </select>
+    <!--批量操作-->
+    <!--1-批量新增-->
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into lq.student(num, sname, sex, age, creTim)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.num}, #{entity.sname}, #{entity.sex}, #{entity.age}, #{entity.cretim})
+        </foreach>
+    </insert>
+
+    <!--2-批量删除-->
+    <delete id="deleteBatchByIds" parameterType="java.lang.Long">
+        delete from lq.student WHERE id in
+        <foreach collection="idList" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <!--3-批量修改-->
+    <!-- 批量更新第一种方法，通过接收传进来的参数list进行循环着组装sql -->
+    <update id="updateBatchForeach" parameterType="java.util.List">
+        <foreach collection="list" item="student" index="index" open="" close="" separator=";">
+            update lq.student
+            <set>
+                <if test="student.num != null">
+                    num = #{student.num},
+                </if>
+                <if test="student.sname != null">
+                    sname = #{student.sname},
+                </if>
+                <if test="student.sex != null">
+                    sex = #{student.sex},
+                </if>
+                <if test="student.age != null">
+                    age = #{student.age},
+                </if>
+                <if test="student.cretim != null">
+                    creTim = #{student.cretim},
+                </if>
+            </set>
+            where id = #{student.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
+
+    <!-- 批量更新第二种方法，通过 case when语句变相的进行批量更新 -->
+    <update id="updateBatchCaseWhen" parameterType="java.util.List">
+        update lq.student
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="num =case" suffix="end,">
+                <foreach collection="list" item="student" index="index">
+                    <if test="student.num !=null">
+                        when id=#{student.id} then #{student.num}
+                    </if>
+                </foreach>
+            </trim>
+
+            <trim prefix="sname =case" suffix="end,">
+                <foreach collection="list" item="student" index="index">
+                    <if test="student.sname !=null">
+                        when id=#{student.id} then #{student.sname}
+                    </if>
+                </foreach>
+            </trim>
+
+            <trim prefix="sex =case" suffix="end,">
+                <foreach collection="list" item="student" index="index">
+                    <if test="student.sex !=null">
+                        when id=#{student.id} then #{student.sex}
+                    </if>
+                </foreach>
+            </trim>
+
+            <trim prefix="age =case" suffix="end,">
+                <foreach collection="list" item="student" index="index">
+                    <if test="student.age !=null">
+                        when id=#{student.id} then #{student.age}
+                    </if>
+                </foreach>
+            </trim>
+
+            <trim prefix="cretim =case" suffix="end,">
+                <foreach collection="list" item="student" index="index">
+                    <if test="student.cretim !=null">
+                        when id=#{student.id} then #{student.cretim}
+                    </if>
+                </foreach>
+            </trim>
+
+
+        </trim>
+        where
+        <foreach collection="list" separator="or" item="student" index="index">
+            id=#{student.id}
+        </foreach>
+    </update>
+
+    <!--4-批量查询-->
+
+    <!--查询指定行数据-->
+    <select id="queryBatchByIds" resultMap="StudentMap">
+        select *
+        from lq.student
+        where id in
+        <foreach collection="idList" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="StudentMap">
+        select
+        id, num, sname, sex, age, creTim
+        from lq.student
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="num != null and num != ''">
+                and num = #{num}
+            </if>
+            <if test="sname != null and sname != ''">
+                and sname = #{sname}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex = #{sex}
+            </if>
+            <if test="age != null and age != ''">
+                and age = #{age}
+            </if>
+            <if test="cretim != null">
+                and creTim = #{cretim}
+            </if>
+        </where>
+    </select>
+
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into lq.student(num, sname, sex, age, creTim)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.num}, #{entity.sname}, #{entity.sex}, #{entity.age}, #{entity.cretim})
+        </foreach>
+        on duplicate key update
+        num = values(num) , sname = values(sname) , sex = values(sex) , age = values(age) , creTim = values(creTim)
+    </insert>
+
+
+</mapper>

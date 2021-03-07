@@ -1,0 +1,141 @@
+##定义初始变量
+#set($tableName = $tool.append($tableInfo.name, "Controller"))
+##设置回调
+$!callback.setFileName($tool.append($tableName, ".java"))
+$!callback.setSavePath($tool.append($tableInfo.savePath, "/controller"))
+##拿到主键
+#if(!$tableInfo.pkColumn.isEmpty())
+    #set($pk = $tableInfo.pkColumn.get(0))
+#end
+
+#if($tableInfo.savePackageName)package $!{tableInfo.savePackageName}.#{end}controller;
+
+import $!{tableInfo.savePackageName}.entity.$!{tableInfo.name};
+import $!{tableInfo.savePackageName}.service.I$!{tableInfo.name}Service;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * $!{tableInfo.comment}($!{tableInfo.name})表控制层
+ *
+ * @author jack
+ * @since $!time.currTime()
+ */
+@RestController
+
+public class $!{tableName} {
+    private Logger logger= LoggerFactory.getLogger($!{tableName}.class);
+    /**
+     * 服务对象
+     */
+    @Autowired
+    private I$!{tableInfo.name}Service $!tool.firstLowerCase($tableInfo.name)Service;
+ /** ************************ 增删改查*******************/
+    /**
+     * 新增数据
+     * @param $!tool.firstLowerCase($!{tableInfo.name}) 实例对象
+     * @return 影响行数
+     */
+    @RequestMapping(value = "/insert", method = RequestMethod.POST)
+    public Integer insert(@RequestBody $!{tableInfo.name} $!tool.firstLowerCase($!{tableInfo.name})){
+         logger.info("插入数据");
+        return this.$!{tool.firstLowerCase($tableInfo.name)}Service.insert( $!tool.firstLowerCase($!{tableInfo.name}));
+    }
+
+    /**
+     * 删除数据
+     * @param $!tool.firstLowerCase($!{tableInfo.name}) 实例对象
+     * @return 影响行数
+     */
+    @RequestMapping(value = "/deleteById", method = RequestMethod.POST)
+    public Integer deleteById(@RequestBody $!{tableInfo.name} $!tool.firstLowerCase($!{tableInfo.name})){
+        logger.info("删除数据");
+        Long id=student.getId();
+        return this.$!{tool.firstLowerCase($tableInfo.name)}Service.deleteById( id);
+    }
+
+    /**
+     * 修改数据
+     * @param $!tool.firstLowerCase($!{tableInfo.name}) 实例对象
+     * @return 影响行数
+     */
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public Integer update(@RequestBody $!{tableInfo.name} $!tool.firstLowerCase($!{tableInfo.name})){
+        logger.info("update");
+        return this.$!{tool.firstLowerCase($tableInfo.name)}Service.update( $!tool.firstLowerCase($!{tableInfo.name}));
+    }
+    /**
+     * 查询数据
+     * @param $!tool.firstLowerCase($!{tableInfo.name}) 实例对象
+     * @return 影响行数
+     */
+    @RequestMapping(value = "/queryById", method = RequestMethod.POST)
+    public $!{tableInfo.name} queryById(@RequestBody $!{tableInfo.name} $!tool.firstLowerCase($!{tableInfo.name})){
+        logger.info("删除数据");
+        Long id=student.getId();
+        return this.$!{tool.firstLowerCase($tableInfo.name)}Service.queryById( id);
+    }
+ /** ************************ 批量操作*******************/
+    /**
+     * 插入多条数据
+     * @param studentList student列表
+     * @return 影响行数
+     */
+    @RequestMapping(value = "/insertBatch", method = RequestMethod.POST)
+    public Integer insertBatch(@RequestBody List<$!{tableInfo.name}> $!tool.firstLowerCase($!{tableInfo.name})List){
+        logger.info("插入多条数据");
+        return this.$!{tool.firstLowerCase($tableInfo.name)}Service.insertBatch( $!tool.firstLowerCase($!{tableInfo.name})List);
+    }
+    /**
+     * 删除多条数据
+     * @param studentList student列表
+     * @return 影响行数
+     */
+    @RequestMapping(value = "/deleteBatchByIds", method = RequestMethod.POST)
+    public Integer deleteBatchByIds(@RequestBody List<$!{tableInfo.name}> $!tool.firstLowerCase($!{tableInfo.name})List){
+        logger.info("删除多条数据");
+         List<Long> idList = $!tool.firstLowerCase($!{tableInfo.name})List
+         .stream().map(x -> x.getId()).collect(Collectors.toList());
+
+        return this.$!{tool.firstLowerCase($tableInfo.name)}Service.deleteBatchByIds(idList);
+    }
+    /**
+     * 更新多条数据（Foreach方式）
+     * @param studentList student列表
+     * @return 影响行数
+     */
+    @RequestMapping(value = "/updateBatchForeach", method = RequestMethod.POST)
+    public Integer updateBatchForeach(@RequestBody List<$!{tableInfo.name}>  $!tool.firstLowerCase($!{tableInfo.name})List){
+        logger.info("更新多条数据（Foreach方式）");
+        return this.$!{tool.firstLowerCase($tableInfo.name)}Service.updateBatchForeach( $!tool.firstLowerCase($!{tableInfo.name})List);
+    }
+    /**
+     * 更新多条数据（CaseWhen方式）
+     * @param studentList student列表
+     * @return 影响行数
+     */
+    @RequestMapping(value = "/updateBatchCaseWhen", method = RequestMethod.POST)
+    public Integer updateBatchCaseWhen(@RequestBody List<$!{tableInfo.name}>  $!tool.firstLowerCase($!{tableInfo.name})List){
+        logger.info("更新多条数据（CaseWhen方式）");
+        return this.$!{tool.firstLowerCase($tableInfo.name)}Service.updateBatchCaseWhen( $!tool.firstLowerCase($!{tableInfo.name})List);
+    }
+    /**
+	/**
+     * 查询多条数据
+     * @param studentList student列表
+     * @return 对象列表
+     */
+    @RequestMapping(value = "/queryBatchByIds", method = RequestMethod.POST)
+    public List<$!{tableInfo.name}>  queryBatchByIds(@RequestBody List<$!{tableInfo.name}>  $!tool.firstLowerCase($!{tableInfo.name})List){
+        logger.info("查询多条数据");
+         List<Long> idList = $!tool.firstLowerCase($!{tableInfo.name})List
+         .stream().map(x -> x.getId()).collect(Collectors.toList());//此处在生成时报路径错误，生成后删除多余行
+        return this.$!{tool.firstLowerCase($tableInfo.name)}Service.queryBatchByIds(idList);
+    }
+
+}
