@@ -1,5 +1,6 @@
 package com.lq.lqproj.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 
@@ -197,5 +198,122 @@ public class SortAlgorithm {
         System.arraycopy(temp, 0, a, start + 0, temp.length);
 
     }
+    /***   8-计数排序   ********************************
+     -使用一个额外的数组C，其中第i个元素是待排序数组A中值等于i的元素的个数。然后根据数组C来将A中的元素排到正确的位置。
+     1：找出待排序的数组中最大和最小的元素；
+     2：统计数组中每个值为i的元素出现的次数，存入数组C的第i项；
+     3：对所有的计数累加（从C中的第一个元素开始，每一项和前一项相加）；
+     4：反向填充目标数组：将每个元素i放在新数组的第C(i)项，每放一个元素就将C(i)减去1。
+     */
 
+    public  int[] countingSort(int[] array) {
+        if (array.length == 0) return array;
+        int bias, min = array[0], max = array[0];
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] > max)
+                max = array[i];
+            if (array[i] < min)
+                min = array[i];
+        }
+        bias = 0 - min;
+        int[] bucket = new int[max - min + 1];
+        Arrays.fill(bucket, 0);
+        for (int i = 0; i < array.length; i++) {
+            bucket[array[i] + bias]++;
+        }
+        int index = 0, i = 0;
+        while (index < array.length) {
+            if (bucket[i] != 0) {
+                array[index] = i - bias;
+                bucket[i]--;
+                index++;
+            } else
+                i++;
+        }
+        return array;
+    }
+
+    /***   9-桶排序   ********************************
+     是计数排序的升级版。假设输入数据服从均匀分布，将数据分到有限数量的桶里，每个桶再分别排序（有可能再使用别的排序算法或是以递归方式继续使用桶排序进行
+     步骤1：人为设置一个BucketSize，作为每个桶所能放置多少个不同数值（例如当BucketSize==5时，该桶可以存放｛1,2,3,4,5｝这几种数字，但是容量不限，即可以存放100个3）；
+     步骤2：遍历输入数据，并且把数据一个一个放到对应的桶里去；
+     步骤3：对每个不是空的桶进行排序，可以使用其它排序方法，也可以递归使用桶排序；
+     步骤4：从不是空的桶里把排好序的数据拼接起来。 
+
+     */
+
+    public  ArrayList<Integer> BucketSort(ArrayList<Integer> array, int bucketSize) {
+        if (array == null || array.size() < 2)
+            return array;
+        int max = array.get(0), min = array.get(0);
+        // 找到最大值最小值
+        for (int i = 0; i < array.size(); i++) {
+            if (array.get(i) > max)
+                max = array.get(i);
+            if (array.get(i) < min)
+                min = array.get(i);
+        }
+        int bucketCount = (max - min) / bucketSize + 1;
+        ArrayList<ArrayList<Integer>> bucketArr = new ArrayList<>(bucketCount);
+        ArrayList<Integer> resultArr = new ArrayList<>();
+        for (int i = 0; i < bucketCount; i++) {
+            bucketArr.add(new ArrayList<Integer>());
+        }
+        for (int i = 0; i < array.size(); i++) {
+            bucketArr.get((array.get(i) - min) / bucketSize).add(array.get(i));
+        }
+        for (int i = 0; i < bucketCount; i++) {
+            if (bucketSize == 1) { // 如果带排序数组中有重复数字时
+                for (int j = 0; j < bucketArr.get(i).size(); j++)
+                    resultArr.add(bucketArr.get(i).get(j));
+            } else {
+                if (bucketCount == 1)
+                    bucketSize--;
+                ArrayList<Integer> temp = BucketSort(bucketArr.get(i), bucketSize);
+                for (int j = 0; j < temp.size(); j++)
+                    resultArr.add(temp.get(j));
+            }
+        }
+        return resultArr;
+    }
+    /***   10-基数排序   ********************************
+     基数排序是按照低位先排序，然后收集；再按照高位排序，然后再收集；依次类推，直到最高位。
+     1-实现步骤
+     步骤1：取得数组中的最大数，并取得位数；
+     步骤2：arr为原始数组，从最低位开始取每个位组成radix数组；
+     步骤3：对radix进行计数排序（利用计数排序适用于小范围数的特点）；
+
+     */
+
+    public static int[] RadixSort(int[] array) {
+        if (array == null || array.length < 2)
+            return array;
+        // 1.先算出最大数的位数；
+        int max = array[0];
+        for (int i = 1; i < array.length; i++) {
+            max = Math.max(max, array[i]);
+        }
+        int maxDigit = 0;
+        while (max != 0) {
+            max /= 10;
+            maxDigit++;
+        }
+        int mod = 10, div = 1;
+        ArrayList<ArrayList<Integer>> bucketList = new ArrayList<ArrayList<Integer>>();
+        for (int i = 0; i < 10; i++)
+            bucketList.add(new ArrayList<Integer>());
+        for (int i = 0; i < maxDigit; i++, mod *= 10, div *= 10) {
+            for (int j = 0; j < array.length; j++) {
+                int num = (array[j] % mod) / div;
+                bucketList.get(num).add(array[j]);
+            }
+            int index = 0;
+            for (int j = 0; j < bucketList.size(); j++) {
+                for (int k = 0; k < bucketList.get(j).size(); k++)
+                    array[index++] = bucketList.get(j).get(k);
+                bucketList.get(j).clear();
+            }
+        }
+        return array;
+    }
 }

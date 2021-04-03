@@ -100,8 +100,7 @@ public class StudentController {
     @RequestMapping(value = "/deleteBatchByIds", method = RequestMethod.POST)
     public Integer deleteBatchByIds(@RequestBody List<Student> studentList) {
         logger.info("删除多条数据");
-        List<Long> idList = studentList
-                .stream().map(x -> x.getId()).collect(Collectors.toList());
+        List<Long> idList = studentList.stream().map(x -> x.getId()).collect(Collectors.toList());
 
         return this.studentService.deleteBatchByIds(idList);
     }
