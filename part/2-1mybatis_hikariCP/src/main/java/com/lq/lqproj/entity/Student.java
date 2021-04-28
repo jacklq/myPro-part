@@ -13,7 +13,9 @@ import java.util.Date;
  */
 
 @Data
-public class Student implements Serializable {
+public class
+
+Student implements Serializable {
     private static final long serialVersionUID = -89315412588872081L;
     /**
      * ID
